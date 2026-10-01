@@ -32,7 +32,7 @@ Pi 內建 `opencode-go` 是**靜態模型目錄**。Pi 會定期從 `pi.dev` 接
 檔案位於 Pi 使用者 extension 目錄：
 
 ```text
-~/.pi/agent/extensions/opencode-go-live-catalog-v1.0.0/index.ts
+~/.pi/agent/extensions/opencode-go-live-catalog-v1.0.1/index.ts
 ```
 
 Pi 會自動載入該目錄內的 `index.ts`。它僅使用 Pi 已提供的公開 extension API，不含額外 npm 相依套件；不需要重複執行舊 PowerShell 同步腳本。
@@ -58,3 +58,49 @@ Pi-Web 不會將 Pi extension 的自訂 slash command 顯示在 Web UI，因此�
 ## 版本相容性
 
 開發與驗證版本：Pi 0.87.0、Pi-Web 內嵌 Pi 0.87.1。Extension 使用公開的 `@earendil-works/pi-ai/providers/all` 匯出；Pi 大版本更新後，請重新啟動 Pi-Web 並確認 `gpt-6-luna` 可見及可完成一般對話。
+
+---
+
+# English
+
+## What it does
+
+This Pi extension queries the authenticated OpenCode Go `/v1/models` endpoint whenever Pi or Pi-Web creates a model runtime. It safely adds verified live GPT-Luna models, such as `gpt-6-luna`, without modifying `auth.json` or `models.json` and without logging credentials.
+
+Pi's built-in `opencode-go` catalog is static and may receive delayed updates through `pi.dev`. It does not normally query the model list attached to an individual OpenCode Go subscription, so a newly available upstream model may not appear immediately.
+
+## Verified dynamic-model policy
+
+Only live IDs matching the following pattern are added automatically:
+
+```text
+^gpt-(version)-luna$
+```
+
+The extension uses the built-in, verified `gpt-5.6-luna` profile as the compatibility template for a newer GPT-Luna model. `gpt-6-luna` has been verified with the OpenCode Go Responses API for both text responses and function tool calls.
+
+Other unknown IDs are deliberately not inferred from their names. The OpenCode Go catalog returns model IDs only, which is insufficient to safely choose among Chat Completions, Responses, and Anthropic Messages APIs or to claim input, tool, thinking, and context capabilities.
+
+## Installation and use
+
+Place this repository in Pi's user extension directory, for example:
+
+```text
+~/.pi/agent/extensions/opencode-go-live-catalog-v1.0.1/
+```
+
+Pi discovers `index.ts` automatically. Restart Pi-Web or Pi after installation, then refresh the model page and search for `gpt-6-luna`. Pi-Web caches the model API response for up to 60 seconds.
+
+Pi-Web does not expose custom Pi extension slash commands in its web UI. Synchronization occurs automatically during model-runtime creation; there is no slash command to run in Pi-Web.
+
+## Security and persistence
+
+| Item | Behavior |
+| --- | --- |
+| Model source | `https://opencode.ai/zen/go/v1/models` |
+| Credentials | Reads the existing `opencode-go.key` from Pi's `auth.json`; never writes or logs it |
+| Persistence | A Pi provider refresh may save only the dynamic model patch to `models-store.json` |
+| `models.json` | Never modified; existing custom models remain in effect |
+| Unknown models | Not added automatically until their protocol and capabilities are verified |
+
+Tested with Pi 0.87.0 and Pi-Web's embedded Pi 0.87.1.
