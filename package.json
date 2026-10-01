@@ -1,0 +1,12 @@
+{
+  "name": "pi-opencode-go-live-catalog",
+  "version": "1.0.1",
+  "private": true,
+  "type": "module",
+  "description": "A Pi extension that safely discovers verified OpenCode Go GPT-Luna models from the live account catalog.",
+  "pi": {
+    "extensions": [
+      "./index.ts"
+    ]
+  }
+}
