@@ -1,3 +1,20 @@
+> ## ⚠️ 此 repo 已封存（Archived）
+>
+> 本專案（extension v1.0.x）已被取代，**不再維護**。
+>
+> 問題：它以 `pi.registerProvider` 註冊 `opencode-go`，會**取代** Pi 核心的 pi.dev 遠端目錄 overlay，
+> 導致上游改名後的新 ID（例如 `space-bunny`）永遠不出現，而 Pi 內建靜態目錄中已下架的 ID
+> （`space-bunny-free`）反而持續顯示。
+>
+> 請改用新元件：
+>
+> - **Pi extension（顯示清單裁切）**：<https://github.com/terrydada-art/pi-ext-opencode-go-catalog>（v1.1.0+）
+> - **模型能力／成本同步工具（技能）**：<https://github.com/terrydada-art/pi-opencode-go-models>（v1.2.0+）
+>
+> 本 repo 保留作為歷史紀錄，內容唯讀。
+
+---
+
 # OpenCode Go Live Catalog Extension v1.0.1
 
 此 Pi extension 以帳號的 OpenCode Go `/v1/models` 為來源，在 Pi／Pi-Web 建立模型 runtime 時動態補上已驗證可用的新模型；它不修改 `auth.json` 或 `models.json`，也不會輸出 API Key。Pi 進行 provider refresh 時，成功結果會透過 provider catalog store 持久化至 `models-store.json`。
